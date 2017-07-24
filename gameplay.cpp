@@ -2,6 +2,7 @@
 #include "vector2.h"
 #include "fstream"
 
+//Constructor for new gameplay
 Gameplay::Gameplay()
 {
     _path = "map.txt";
@@ -9,6 +10,7 @@ Gameplay::Gameplay()
     drawMap();
 }
 
+//Create GameObject list from input characters:
 void Gameplay::createList(){
     char c;
     int x = 0,y = 0;
@@ -33,12 +35,14 @@ void Gameplay::createList(){
     inputStream.close();
 }
 
+//Check the input character for new line signature:
 bool Gameplay::newLine(char c){
     if(c == '\n')
         return true;
     return false;
 }
 
+//Check the input character for gameobject type:
 bool Gameplay::gameObject(char c){
     for(uint i = 0; i < sizeof(_gameObjects); i++){
         if(c == _gameObjects[i])
@@ -47,12 +51,14 @@ bool Gameplay::gameObject(char c){
     return false;
 }
 
+//Check the input character for player type:
 bool Gameplay::player(char c){
     if(c == 'h')
         return true;
     return false;
 }
 
+//Draw the map from GameObject list:
 void Gameplay::drawMap(){
     int i =0, j = 0, k = 0;
     int x = gameObjectList.back().getPosition().X;
@@ -73,4 +79,10 @@ void Gameplay::drawMap(){
         cout<<endl;
         i++;
     }
+}
+
+//Clear the console:
+void Gameplay::clear(){
+    if (system("CLS"))
+        system("clear");
 }

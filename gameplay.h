@@ -18,6 +18,7 @@ class Gameplay
     bool player(char c);
 
     void drawMap();
+    void clear();
 
 protected:
     vector<GameObject> gameObjectList;

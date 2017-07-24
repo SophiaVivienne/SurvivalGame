@@ -6,20 +6,20 @@ class Player : public GameObject
 {
     int _hp;
     bool _hasSword;
-    bool _hasChest;
+    bool _hasTreasure;
 public:
     const int MaxHp = 2;
 
     Player();
-    Player(char Icon, Vector2 Position, int _hp, bool _hasSword, bool _hasChest);
+    Player(char Icon, Vector2 Position, int _hp, bool _hasSword, bool _hasTreasure);
 
     int getHP();
     bool hasSword();
-    bool hasChest();
+    bool hasTreasure();
 
     void setHp(int hp);
     void setHasSword(bool hasSword);
-    void setHasChest(bool hasChest);
+    void setHasTreasure(bool hasTreasure);
 };
 
 #endif // PLAYER_H
