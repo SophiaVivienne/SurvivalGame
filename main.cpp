@@ -1,9 +1,10 @@
-#include <iostream>
+//#include "iostream"
+#include "gameplay.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    cout << "Hello World!" << endl;
+    Gameplay *gameplay = new Gameplay();
     return 0;
 }
