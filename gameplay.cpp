@@ -4,6 +4,7 @@
 #include "controller.h"
 #include "unistd.h"
 #include "termios.h"
+#include "sstream"
 
 //Constructor for new gameplay
 Gameplay::Gameplay()
@@ -78,6 +79,8 @@ void Gameplay::createMatrix(vector<GameObject*> list){
             if((list.at(n)->getPosition().X == i) && (list.at(n)->getPosition().Y == j)){
                 if(list.at(n)->getIcon() == 'j')
                     exit = false;
+                if(list.at(n)->getIcon() == 'h')
+                    player = n;
                 row.push_back(list.at(n)->getIcon());
                 n++;
             }
@@ -95,6 +98,7 @@ void Gameplay::createMatrix(vector<GameObject*> list){
     map.at(list.at(player)->getPosition().X).at(list.at(player)->getPosition().Y) = 'h';
 
     drawMatrix(map,x,y);
+    writePlayerDatas(player);
 
     if(exit)
         exitGame(player);
@@ -108,6 +112,16 @@ void Gameplay::drawMatrix(vector<vector<char>> map, int x, int y){
         }
         cout<<endl;
     }
+}
+
+//Write player datas:
+void Gameplay::writePlayerDatas(int i){
+    Player *player = (Player*)_gameObjectList.at(i);
+    ostringstream oss;
+    oss << "HP: " << player->getHP() << endl
+        << "Kard: " << player->hasSword() << endl
+        << "Kincs: " << player->hasTreasure() << endl;
+    cout << oss.str();
 }
 
 //Update map:

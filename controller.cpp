@@ -125,7 +125,7 @@ void Controller::moveToMonster(Player *player, Vector2 nextPosition){
     int currentHp = player->getHP();
     if(player->hasSword()){
         deleteGameObject(nextPosition);
-        player->setHp(currentHp--);
+        player->setHp(currentHp-1);
         player->setPosition(nextPosition);
     }else{
         player->setHp(0);
@@ -139,7 +139,7 @@ void Controller::moveToMonster(Player *player, Vector2 nextPosition){
 void Controller::moveToPotion(Player *player, Vector2 nextPosition){
     int currentHp = player->getHP();
     if(currentHp != player->MaxHp){
-        player->setHp(currentHp++);
+        player->setHp(currentHp+1);
         deleteGameObject(nextPosition);
     }
     player->setPosition(nextPosition);

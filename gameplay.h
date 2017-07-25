@@ -20,6 +20,7 @@ class Gameplay
     void drawMatrix(vector<vector<char>> map, int x, int y);
     bool player(char c);
     void drawMap(vector<GameObject> list);
+    void writePlayerDatas(int i);
     void updateMap();
     char getch();
     void clear();
