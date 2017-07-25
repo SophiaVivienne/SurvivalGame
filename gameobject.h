@@ -15,6 +15,7 @@ public:
 
     void setIcon(char icon);
     void setPosition(Vector2 position);
+    bool operator ==(const GameObject& gameObject);
 };
 
 #endif // GAMEOBJECT_H

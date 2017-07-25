@@ -7,10 +7,12 @@ SOURCES += main.cpp \
     gameplay.cpp \
     gameobject.cpp \
     vector2.cpp \
-    player.cpp
+    player.cpp \
+    controller.cpp
 
 HEADERS += \
     gameplay.h \
     gameobject.h \
     vector2.h \
-    player.h
+    player.h \
+    controller.h
