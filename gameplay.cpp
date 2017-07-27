@@ -5,137 +5,122 @@
 #include "unistd.h"
 #include "termios.h"
 #include "sstream"
+#include "dirent.h"
+
 
 //Constructor for new gameplay
 Gameplay::Gameplay()
 {
-    _path = "map.txt";
-    createList();
-    createMatrix(_gameObjectList);
-    //drawMap(_gameObjectList);
+    start();
+}
+
+void Gameplay::start(){
+    choseMap();
+    createMap();
     updateMap();
 }
 
-//Create GameObject list from input characters:
-void Gameplay::createList(){
-    char c;
-    int x = 0,y = 0;
-    fstream inputStream(_path,fstream::in);
 
-    while(inputStream>>noskipws>>c){
-        if(newLine(c)){
-            x++;
-            y = 0;
-        }else{
-            if(gameObject(c)){
-                Vector2 position(x,y);
-                _gameObjectList.push_back(new GameObject(c,position));
-            }else if(player(c)){
-                Vector2 position(x,y);
-                _gameObjectList.push_back(new Player(c,position,2,false,false));
-            }
-            y++;
+bool Gameplay::hasSuffix(const string& s, const string& suffix)
+{
+    return (s.size() >= suffix.size()) && equal(suffix.rbegin(), suffix.rend(), s.rbegin());
+}
+
+void Gameplay::choseMap(){
+    string path = "Maps";
+
+    DIR *dir = opendir(path.c_str());
+    if(!dir)
+    {
+        return;
+    }    Map *map = new Map(&_gameObjectList, _path);
+
+    dirent *entry;
+    while((entry = readdir(dir))!=NULL)
+    {
+        if(hasSuffix(entry->d_name, ".txt"))
+        {
+            maps.push_back(entry->d_name);
         }
     }
 
-    inputStream.close();
-}
+    closedir(dir);
 
-//Check the input character for new line signature:
-bool Gameplay::newLine(char c){
-    if(c == '\n')
-        return true;
-    return false;
-}
+    cout << "Which map do you want? (Chose a number!)\n";
+    for(int i = 0; i < maps.size(); i++)
+        cout << i << ". " << maps.at(i) << endl;
 
-//Check the input character for gameobject type:
-bool Gameplay::gameObject(char c){
-    for(uint i = 0; i < sizeof(_gameObjects); i++){
-        if(c == _gameObjects[i])
-            return true;
-    }
-    return false;
-}
+    bool isValid = false;
+    uint n;
 
-//Check the input character for player type:
-bool Gameplay::player(char c){
-    if(c == 'h')
-        return true;
-    return false;
-}
-
-//Create Matrix from GameObject list:
-void Gameplay::createMatrix(vector<GameObject*> list){
-    vector<vector<char>> map;
-    int n = 0;
-    int player;
-    bool exit = true;
-    int x = list.back()->getPosition().X;
-    int y = list.back()->getPosition().Y;
-
-    for (int i = 0; i <= x; i++){
-        vector<char> row;
-        for(int j = 0; j <= y; j++){
-            if((list.at(n)->getPosition().X == i) && (list.at(n)->getPosition().Y == j)){
-                if(list.at(n)->getIcon() == 'j')
-                    exit = false;
-                if(list.at(n)->getIcon() == 'h')
-                    player = n;
-                row.push_back(list.at(n)->getIcon());
-                n++;
-            }
-            else if (list.at(n)->getIcon() == 'h'){
-                row.push_back(' ');
-                player = n;
-                n++;
-            }else{
-                row.push_back(' ');
-            }
-        }
-        map.push_back(row);
+    while(!isValid){
+       cin >> n;
+       if(n <= maps.size())
+           isValid = true;
     }
 
-    map.at(list.at(player)->getPosition().X).at(list.at(player)->getPosition().Y) = 'h';
-
-    drawMatrix(map,x,y);
-    writePlayerDatas(player);
-
-    if(exit)
-        exitGame(player);
+    _path = maps.at(n);
+    clear();
 }
 
-//Draw map from created Matrix:
-void Gameplay::drawMatrix(vector<vector<char>> map, int x, int y){
-    for (int m = 0; m <= x; m++){
-        for(int n = 0; n <= y; n++){
-            cout<<map.at(m).at(n);
-        }
-        cout<<endl;
-    }
-}
-
-//Write player datas:
-void Gameplay::writePlayerDatas(int i){
-    Player *player = (Player*)_gameObjectList.at(i);
-    ostringstream oss;
-    oss << "HP: " << player->getHP() << endl
-        << "Kard: " << player->hasSword() << endl
-        << "Kincs: " << player->hasTreasure() << endl;
-    cout << oss.str();
+void Gameplay::createMap(){
+    map = new Map(&_gameObjectList, _path);
+    map->drawMap();
 }
 
 //Update map:
 void Gameplay::updateMap(){
     Controller controller(&_gameObjectList);
     char inputChar;
-    gameOver = false;
+    //map->exit = false;
 
-    while(!gameOver){
+    while(!map->exit){
         inputChar = getch();
-        clear();
         controller.input(inputChar);
-        createMatrix(_gameObjectList);
+         clear();
+         map->drawMap();
     }
+    exitGame(map->player);
+
+}
+
+//TODO:
+/*void Gameplay::restart(){
+    bool validChar = false;
+    char inputChar;
+    cout << "\nDo you want to play again? (y/n)\n";
+    do{
+    inputChar = getch();
+
+    if(inputChar == 'y' || inputChar == 'n')
+        validChar = true;
+    else
+        cout << "Invalid character input please type again!\n";
+
+    }while(!validChar);
+
+    clear();
+
+    if(inputChar == 'y')
+        start();
+}*/
+
+//Game ending:
+void Gameplay::exitGame(int playerIndex){
+    clear();
+    Player *player = (Player*)_gameObjectList.at(playerIndex);
+    if(player->hasTreasure() && player->getHP() > 0)
+        cout<< "Victory!!!\n";
+    else if (player->getHP() > 0)
+        cout<< "Surrender.\n";
+    else
+        cout<< "Defeat...\n";
+    gameOver = true;
+
+    _gameObjectList.clear();
+    maps.clear();
+
+    //restart();
 }
 
 //Get character:
@@ -161,19 +146,6 @@ char Gameplay::getch() {
 
 //Clear the console:
 void Gameplay::clear(){
-    if (system("CLS"))
-        system("clear");
-}
-
-//Game ending:
-void Gameplay::exitGame(int playerIndex){
-    clear();
-    Player *player = (Player*)_gameObjectList.at(playerIndex);
-    if(player->hasTreasure() && player->getHP() > 0)
-        cout<< "Victory!!!\n";
-    else if (player->getHP() > 0)
-        cout<< "Surrender.\n";
-    else
-        cout<< "Defeat...\n";
-    gameOver = true;
+    if (system("clear"))
+        system("CLS");
 }

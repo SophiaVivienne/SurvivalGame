@@ -3,34 +3,39 @@
 #include "iostream"
 #include "vector"
 #include "player.h"
+#include "map.h"
 
 using namespace std;
 
 class Gameplay
 {
+//----------------------PLAY.H:
     string _path;
-    bool gameOver;
-    char _gameObjects[7] = {'a','c','i','k','s','x','j'};
 
-    void createList();
-
-    bool newLine(char c);
-    bool gameObject(char c);
-    void createMatrix(vector<GameObject*> list);
-    void drawMatrix(vector<vector<char>> map, int x, int y);
-    bool player(char c);
-    void drawMap(vector<GameObject> list);
-    void writePlayerDatas(int i);
+    void choseMap();
+    void createMap();
     void updateMap();
-    char getch();
-    void clear();
+
+    bool hasSuffix(const string& s, const string& suffix);
+//----------------------MARAD:
+    bool gameOver;
+
+    void start();
+    void restart();
     void exitGame(int playerIndex);
 
+
+    char getch();
+    void clear();
+
 protected:
+    vector<string> maps;
+    Map *map;
     vector<GameObject*> _gameObjectList;
 
 public:
     Gameplay();
+    void createGame(); //new
 };
 
 #endif // GAMEPLAY_H

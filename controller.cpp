@@ -129,6 +129,9 @@ void Controller::moveToMonster(Player *player, Vector2 nextPosition){
         player->setPosition(nextPosition);
     }else{
         player->setHp(0);
+    }
+
+    if(player->getHP() == 0){
         int n = getGameObjectByIcon('j');
         Vector2 exitPosition =_gameobjectList->at(n)->getPosition();
         exit(player,exitPosition);
@@ -154,8 +157,8 @@ void Controller::moveToChest(Player *player, Vector2 nextPosition){
 
 //Jump throw the trap:
 void Controller::moveToTrap(Player *player, Vector2 nextPosition){
-    player->setPosition(nextPosition);
     _gameobjectList->at(getGameObjectByPosition(nextPosition))->setIcon('x');
+    player->setPosition(nextPosition);
 }
 
 void Controller::exit(Player *player, Vector2 nextPosition){
